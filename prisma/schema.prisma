@@ -5,11 +5,100 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  COMPRADOR
+  VENDEDOR
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      UserRole @default(COMPRADOR)
+  createdAt DateTime @default(now())
+  stores    Store[]
+  orders    Order[]
+  events    Event[]
+}
+
+model Store {
+  id          Int       @id @default(autoincrement())
+  ownerId     Int?
+  name        String
+  category    String
+  description String?
+  logoUrl     String?
+  website     String?
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  owner       User?     @relation(fields: [ownerId], references: [id])
+  products    Product[]
+}
+
+model Product {
+  id          Int         @id @default(autoincrement())
+  storeId     Int
+  name        String
+  category    String
+  price       Float
+  stock       Int         @default(0)
+  imageUrl    String?
+  description String?
+  active      Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  store       Store       @relation(fields: [storeId], references: [id])
+  orderItems  OrderItem[]
+}
+
+model Order {
+  id        Int         @id @default(autoincrement())
+  userId    Int?
+  subtotal  Float
+  total     Float
+  status    OrderStatus @default(CONFIRMED)
+  createdAt DateTime    @default(now())
+  user      User?       @relation(fields: [userId], references: [id])
+  items     OrderItem[]
+}
+
+model OrderItem {
+  id          Int     @id @default(autoincrement())
+  orderId     Int
+  productId   Int
+  storeId     Int
+  productName String
+  unitPrice   Float
+  quantity    Int
+  subtotal    Float
+  total       Float
+  order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product     Product @relation(fields: [productId], references: [id])
+}
+
+model Event {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  location    String
+  imageUrl    String?
+  startsAt    DateTime
+  createdAt   DateTime @default(now())
+  creatorId   Int
+  creator     User     @relation(fields: [creatorId], references: [id])
 }

@@ -1,0 +1,32 @@
+### Verificar servidor
+GET http://localhost:3000/
+
+### Listar eventos
+GET http://localhost:3000/events
+
+### Calcular resumen de checkout
+POST http://localhost:3000/checkout/summary
+Content-Type: application/json
+
+{
+  "items": [
+    {
+      "productId": 1,
+      "quantity": 2
+    }
+  ]
+}
+
+### Registrar pedido
+POST http://localhost:3000/orders
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "items": [
+    {
+      "productId": 1,
+      "quantity": 2
+    }
+  ]
+}
