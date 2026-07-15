@@ -1,0 +1,21 @@
+{
+  "name": "velmora-backend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node app.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:seed": "node prisma/seed.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.0",
+    "cors": "latest",
+    "express": "latest"
+  },
+  "devDependencies": {
+    "prisma": "^6.19.0"
+  }
+}

@@ -1,0 +1,44 @@
+### Verificar servidor
+GET http://localhost:3000/
+
+### Listar categorias
+GET http://localhost:3000/api/categories
+
+### Ver categoria con productos
+GET http://localhost:3000/api/categories/1
+
+### Listar productos
+GET http://localhost:3000/api/products
+
+### Listar productos por categoria
+GET http://localhost:3000/api/products?categoryId=1
+
+### Listar tendencias
+GET http://localhost:3000/api/products/trending
+
+### Listar tendencias por categoria
+GET http://localhost:3000/api/products/trending?categoryId=5
+
+### Buscar tendencias dentro de una categoria
+GET http://localhost:3000/api/products/trending?categoryId=5&search=camisa
+
+### Filtrar tendencias por precio
+GET http://localhost:3000/api/products/trending?minPrice=100&maxPrice=180
+
+### Ordenar tendencias por menor precio
+GET http://localhost:3000/api/products/trending?sort=price_asc
+
+### Listar favoritos anonimos
+GET http://localhost:3000/api/favorites?userKey=guest-demo
+
+### Agregar favorito
+POST http://localhost:3000/api/favorites
+Content-Type: application/json
+
+{
+  "userKey": "guest-demo",
+  "productId": 1
+}
+
+### Eliminar favorito
+DELETE http://localhost:3000/api/favorites/1?userKey=guest-demo
