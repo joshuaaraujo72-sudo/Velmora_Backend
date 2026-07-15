@@ -1,0 +1,130 @@
+@baseUrl = http://localhost:3000
+@token = PEGAR_TOKEN_AQUI
+@storeId = PEGAR_STORE_ID_AQUI
+@productId = PEGAR_PRODUCT_ID_AQUI
+
+### Estado del API
+GET {{baseUrl}}/
+
+### Health check con base de datos
+GET {{baseUrl}}/health
+
+### Registrar comprador
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Comprador Demo",
+  "email": "comprador@velmora.com",
+  "password": "123456",
+  "role": "BUYER"
+}
+
+### Registrar vendedor
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Vendedor Demo",
+  "email": "vendedor@velmora.com",
+  "password": "123456",
+  "role": "SELLER"
+}
+
+### Login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "vendedor@velmora.com",
+  "password": "123456"
+}
+
+### Usuario actual
+GET {{baseUrl}}/api/auth/me
+Authorization: Bearer {{token}}
+
+### Crear tienda del vendedor
+POST {{baseUrl}}/api/stores
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Velmora Studio",
+  "description": "Tienda de ropa urbana y casual.",
+  "category": "Urbana",
+  "storeType": "Independiente",
+  "logoUrl": "https://example.com/logo.png",
+  "instagram": "@velmorastudio",
+  "phone": "999999999"
+}
+
+### Listar tiendas
+GET {{baseUrl}}/api/stores
+
+### Ver tienda con catalogo
+GET {{baseUrl}}/api/stores/{{storeId}}
+
+### Crear producto en tienda
+POST {{baseUrl}}/api/stores/{{storeId}}/products
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Casaca Oversize",
+  "category": "Casacas",
+  "price": 129.90,
+  "stock": 12,
+  "description": "Casaca urbana con corte amplio.",
+  "imageUrl": "https://example.com/casaca.png",
+  "sizes": ["S", "M", "L"],
+  "colors": ["Negro", "Crema"]
+}
+
+### Productos de una tienda
+GET {{baseUrl}}/api/stores/{{storeId}}/products
+
+### Editar producto
+PUT {{baseUrl}}/api/products/{{productId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "price": 119.90,
+  "stock": 8
+}
+
+### Registrar click o vista para dashboard
+POST {{baseUrl}}/api/stores/{{storeId}}/metrics
+Content-Type: application/json
+
+{
+  "type": "CATALOG_CLICK"
+}
+
+### Crear orden de compra
+POST {{baseUrl}}/api/orders
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "items": [
+    {
+      "productId": "{{productId}}",
+      "quantity": 1,
+      "selectedSize": "M",
+      "selectedColor": "Negro"
+    }
+  ]
+}
+
+### Mis ordenes
+GET {{baseUrl}}/api/orders/my
+Authorization: Bearer {{token}}
+
+### Dashboard del vendedor
+GET {{baseUrl}}/api/seller/dashboard
+Authorization: Bearer {{token}}
+
+### Datos dinamicos para landing
+GET {{baseUrl}}/api/home
