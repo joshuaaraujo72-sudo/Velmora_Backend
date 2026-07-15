@@ -1,6 +1,6 @@
 # Velmora Backend
 
-API REST para las funcionalidades principales de Velmora: registro, login, tiendas, catalogo de productos, datos para la pagina principal y dashboard de vendedor.
+API REST para las funcionalidades principales de Velmora: registro, login, tiendas, catalogo de productos, eventos, descuentos, carrito, ordenes y dashboard de vendedor.
 
 ## Stack
 
@@ -33,8 +33,6 @@ npm run dev
 ```
 
 ## Despliegue en Render
-
-Usar este repositorio como Web Service.
 
 Build Command:
 
@@ -77,29 +75,34 @@ GET  /api/stores/:id/products
 POST /api/stores/:id/products
 POST /api/stores/:id/metrics
 
+GET    /api/products
 GET    /api/products/:id
 PUT    /api/products/:id
 DELETE /api/products/:id
+
+GET  /api/events
+GET  /api/events/:id
+POST /api/events
+DELETE /api/events/:id
+
+GET  /api/discounts
+POST /api/discounts
+
+POST /api/cart/checkout/summary
+POST /api/cart/orders
 
 POST /api/orders
 GET  /api/orders/my
 
 GET /api/seller/dashboard
+
+GET  /api/users
+POST /api/users
 ```
-
-## Flujo esperado para probar
-
-1. Registrar un vendedor con `POST /api/auth/register`.
-2. Guardar el token recibido.
-3. Crear la tienda con `POST /api/stores`.
-4. Crear productos con `POST /api/stores/:id/products`.
-5. Consultar `GET /api/stores` para ver la tienda publicada.
-6. Consultar `GET /api/stores/:id` para ver el catalogo.
-7. Consultar `GET /api/seller/dashboard` para revisar estadisticas del vendedor.
 
 ## Relacion con el frontend
 
-El frontend React debe consumir este API usando una variable:
+El frontend React consume este API usando una variable:
 
 ```env
 VITE_API_URL=https://url-del-backend-en-render

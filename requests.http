@@ -2,6 +2,7 @@
 @token = PEGAR_TOKEN_AQUI
 @storeId = PEGAR_STORE_ID_AQUI
 @productId = PEGAR_PRODUCT_ID_AQUI
+@eventId = PEGAR_EVENT_ID_AQUI
 
 ### Estado del API
 GET {{baseUrl}}/
@@ -81,9 +82,6 @@ Authorization: Bearer {{token}}
   "colors": ["Negro", "Crema"]
 }
 
-### Productos de una tienda
-GET {{baseUrl}}/api/stores/{{storeId}}/products
-
 ### Productos generales
 GET {{baseUrl}}/api/products
 
@@ -95,14 +93,6 @@ Authorization: Bearer {{token}}
 {
   "price": 119.90,
   "stock": 8
-}
-
-### Registrar click o vista para dashboard
-POST {{baseUrl}}/api/stores/{{storeId}}/metrics
-Content-Type: application/json
-
-{
-  "type": "CATALOG_CLICK"
 }
 
 ### Calcular resumen de checkout del carrito
@@ -181,5 +171,24 @@ Authorization: Bearer {{token}}
   "storeName": "Velmora Studio"
 }
 
+### Eliminar evento
+DELETE {{baseUrl}}/api/events/{{eventId}}
+Authorization: Bearer {{token}}
+
 ### Listar descuentos
 GET {{baseUrl}}/api/discounts
+
+### Crear usuario desde ruta de usuarios
+POST {{baseUrl}}/api/users
+Content-Type: application/json
+
+{
+  "name": "Usuario Demo",
+  "email": "usuario.demo@velmora.com",
+  "password": "123456",
+  "role": "BUYER"
+}
+
+### Listar usuarios publicos
+GET {{baseUrl}}/api/users
+Authorization: Bearer {{token}}
