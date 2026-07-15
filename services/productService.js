@@ -49,6 +49,20 @@ function buildProductUpdate(data) {
     return updateData;
 }
 
+function toPriceFilter(value, fieldName) {
+    if (value === undefined || value === null || value === "") {
+        return undefined;
+    }
+
+    const price = Number(value);
+
+    if (!Number.isFinite(price) || price < 0) {
+        throw httpError(400, `${fieldName} debe ser un numero valido`);
+    }
+
+    return price;
+}
+
 async function findProductForOwner(productId, ownerId) {
     const product = await prisma.product.findUnique({
         where: { id: productId },
@@ -66,21 +80,46 @@ async function findProductForOwner(productId, ownerId) {
     return product;
 }
 
-export async function listProducts({ category, search } = {}) {
+export async function listProducts({ category, search, minPrice, maxPrice } = {}) {
+    const min = toPriceFilter(minPrice, "minPrice");
+    const max = toPriceFilter(maxPrice, "maxPrice");
+
+    if (min !== undefined && max !== undefined && min > max) {
+        throw httpError(400, "minPrice no puede ser mayor que maxPrice");
+    }
+
+    const filters = [{ isActive: true }];
+
+    if (category && category !== "Todas") {
+        filters.push({
+            OR: [
+                { category },
+                { store: { is: { category } } }
+            ]
+        });
+    }
+
+    if (min !== undefined || max !== undefined) {
+        filters.push({
+            price: {
+                ...(min !== undefined ? { gte: min } : {}),
+                ...(max !== undefined ? { lte: max } : {})
+            }
+        });
+    }
+
+    if (search) {
+        filters.push({
+            OR: [
+                { name: { contains: search, mode: "insensitive" } },
+                { description: { contains: search, mode: "insensitive" } },
+                { category: { contains: search, mode: "insensitive" } }
+            ]
+        });
+    }
+
     const products = await prisma.product.findMany({
-        where: {
-            isActive: true,
-            ...(category && category !== "Todas" ? { category } : {}),
-            ...(search
-                ? {
-                    OR: [
-                        { name: { contains: search, mode: "insensitive" } },
-                        { description: { contains: search, mode: "insensitive" } },
-                        { category: { contains: search, mode: "insensitive" } }
-                    ]
-                }
-                : {})
-        },
+        where: { AND: filters },
         orderBy: { createdAt: "desc" },
         include: {
             store: {

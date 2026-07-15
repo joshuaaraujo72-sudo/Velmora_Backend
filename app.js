@@ -4,8 +4,10 @@ import { loadEnv } from "./config/env.js";
 import { prisma } from "./services/prisma.js";
 import authRoutes from "./routes/authRoutes.js";
 import cartRoutes from "./routes/cartRoutes.js";
+import categoryRoutes from "./routes/categoryRoutes.js";
 import discountRoutes from "./routes/discountRoutes.js";
 import eventRoutes from "./routes/eventRoutes.js";
+import favoriteRoutes from "./routes/favoriteRoutes.js";
 import homeRoutes from "./routes/homeRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
@@ -56,8 +58,10 @@ app.get("/health", async (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/cart", cartRoutes);
+app.use("/api/categories", categoryRoutes);
 app.use("/api/discounts", discountRoutes);
 app.use("/api/events", eventRoutes);
+app.use("/api/favorites", favoriteRoutes);
 app.use("/api/home", homeRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/products", productRoutes);

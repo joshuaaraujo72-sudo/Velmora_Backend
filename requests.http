@@ -85,6 +85,27 @@ Authorization: Bearer {{token}}
 ### Productos generales
 GET {{baseUrl}}/api/products
 
+### Productos por categoria y rango de precio
+GET {{baseUrl}}/api/products?category=Ropa%20urbana&minPrice=50&maxPrice=180
+
+### Conteo de productos por categoria
+GET {{baseUrl}}/api/categories
+
+### Conteo de categorias filtrado por precio
+GET {{baseUrl}}/api/categories?minPrice=50&maxPrice=180
+
+### Mis productos favoritos
+GET {{baseUrl}}/api/favorites
+Authorization: Bearer {{token}}
+
+### Agregar producto a favoritos
+POST {{baseUrl}}/api/favorites/{{productId}}
+Authorization: Bearer {{token}}
+
+### Quitar producto de favoritos
+DELETE {{baseUrl}}/api/favorites/{{productId}}
+Authorization: Bearer {{token}}
+
 ### Editar producto
 PUT {{baseUrl}}/api/products/{{productId}}
 Content-Type: application/json
