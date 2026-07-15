@@ -1,10 +1,10 @@
-# Backend Velmora
+﻿# Backend Velmora
 
 Backend en JavaScript para Velmora usando Node.js, Express, PostgreSQL y Prisma.
 
 ## Instalacion
 
-Desde la carpeta `backend`:
+Desde la carpeta del proyecto `Velmora_Backend`:
 
 ```bash
 pnpm install
@@ -13,10 +13,31 @@ pnpm install
 Crear `.env` tomando como base `.env.example`:
 
 ```env
-DATABASE_URL="postgresql://USUARIO:CONTRASENA@localhost:5432/velmora_db"
+DATABASE_URL="postgresql://usr_velmora:TU_CONTRASENA_URL_ENCODED@velmora.postgres.database.azure.com:5432/postgres?sslmode=require"
 PORT=3000
 ```
 
+
+## Conexion Azure PostgreSQL
+
+Segun el recurso activo de Azure:
+
+```txt
+Host: velmora.postgres.database.azure.com
+Puerto: 5432
+Usuario: usr_velmora
+Base de datos sugerida: postgres
+SSL: requerido
+```
+
+La URL debe tener este formato:
+
+```env
+DATABASE_URL="postgresql://usr_velmora:TU_CONTRASENA_URL_ENCODED@velmora.postgres.database.azure.com:5432/postgres?sslmode=require"
+PORT=3000
+```
+
+Si tu contrasena contiene caracteres como `@`, `#`, `%`, `/`, `:` o espacios, debe ir codificada para URL.
 ## Prisma
 
 ```bash
@@ -79,7 +100,7 @@ POST /orders
 
 El backend calcula los precios finales. El frontend solo muestra el resultado.
 
-Si un cupón no es acumulable y tambien existe un descuento automatico, el backend compara ambos y aplica el mayor. Si el cupón es acumulable, suma descuento automatico y descuento por cupon.
+Si un cupÃ³n no es acumulable y tambien existe un descuento automatico, el backend compara ambos y aplica el mayor. Si el cupÃ³n es acumulable, suma descuento automatico y descuento por cupon.
 
 El pedido guarda:
 
@@ -97,3 +118,4 @@ Esto evita que una compra antigua cambie si despues se edita o elimina una promo
 ## Pruebas
 
 Usa `requests.http` para crear datos de prueba, validar cupones y registrar pedidos.
+

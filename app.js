@@ -1,3 +1,4 @@
+﻿import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { PrismaClient } from "@prisma/client";
@@ -971,3 +972,4 @@ app.post("/orders", async (req, res) => {
 app.listen(port, () => {
   console.log(`Servidor Velmora funcionando en http://localhost:${port}`);
 });
+

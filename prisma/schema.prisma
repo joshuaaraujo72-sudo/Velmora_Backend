@@ -7,74 +7,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserRole {
-  COMPRADOR
-  VENDEDOR
-  ADMIN
-}
-
-enum PromotionType {
-  PERCENTAGE
-  FIXED_AMOUNT
-  TWO_FOR_ONE
-}
-
-enum PromotionStatus {
-  DRAFT
-  ACTIVE
-  PAUSED
-  EXPIRED
-  REJECTED
-}
-
-enum OrderStatus {
-  PENDING
-  CONFIRMED
-  CANCELLED
-}
-
-model User {
+model Coupon {
   id                Int                @id @default(autoincrement())
-  name              String
-  email             String             @unique
-  password          String
-  role              UserRole           @default(COMPRADOR)
+  storeId           Int?
+  code              String             @unique
+  description       String?
+  type              PromotionType
+  value             Float              @default(0)
+  category          String?
+  startsAt          DateTime           @default(now())
+  endsAt            DateTime?
+  status            PromotionStatus    @default(ACTIVE)
+  minPurchaseAmount Float              @default(0)
+  maxUses           Int?
+  usedCount         Int                @default(0)
+  perUserLimit      Int?
+  stackable         Boolean            @default(false)
   createdAt         DateTime           @default(now())
-  stores            Store[]
+  store             Store?             @relation(fields: [storeId], references: [id])
+  redemptions       CouponRedemption[]
   orders            Order[]
-  couponRedemptions CouponRedemption[]
 }
 
-model Store {
-  id          Int        @id @default(autoincrement())
-  ownerId     Int?
-  name        String
-  category    String
-  description String?
-  logoUrl     String?
-  website     String?
-  active      Boolean    @default(true)
-  createdAt   DateTime   @default(now())
-  owner       User?      @relation(fields: [ownerId], references: [id])
-  products    Product[]
-  discounts   Discount[]
-  coupons     Coupon[]
-}
-
-model Product {
-  id          Int               @id @default(autoincrement())
-  storeId     Int
-  name        String
-  category    String
-  price       Float
-  stock       Int               @default(0)
-  imageUrl    String?
-  description String?
-  active      Boolean           @default(true)
-  createdAt   DateTime          @default(now())
-  store       Store             @relation(fields: [storeId], references: [id])
-  discounts   DiscountProduct[]
-  orderItems  OrderItem[]
+model CouponRedemption {
+  id             Int      @id @default(autoincrement())
+  couponId       Int
+  userId         Int?
+  orderId        Int?
+  discountAmount Float
+  usedAt         DateTime @default(now())
+  coupon         Coupon   @relation(fields: [couponId], references: [id])
+  order          Order?   @relation(fields: [orderId], references: [id])
+  user           User?    @relation(fields: [userId], references: [id])
 }
 
 model Discount {
@@ -107,38 +71,16 @@ model DiscountProduct {
   @@id([discountId, productId])
 }
 
-model Coupon {
-  id                Int                @id @default(autoincrement())
-  storeId           Int?
-  code              String             @unique
-  description       String?
-  type              PromotionType
-  value             Float              @default(0)
-  category          String?
-  startsAt          DateTime           @default(now())
-  endsAt            DateTime?
-  status            PromotionStatus    @default(ACTIVE)
-  minPurchaseAmount Float              @default(0)
-  maxUses           Int?
-  usedCount         Int                @default(0)
-  perUserLimit      Int?
-  stackable         Boolean            @default(false)
-  createdAt         DateTime           @default(now())
-  store             Store?             @relation(fields: [storeId], references: [id])
-  orders            Order[]
-  redemptions       CouponRedemption[]
-}
-
-model CouponRedemption {
-  id             Int      @id @default(autoincrement())
-  couponId       Int
-  userId         Int?
-  orderId        Int?
-  discountAmount Float
-  usedAt         DateTime @default(now())
-  coupon         Coupon   @relation(fields: [couponId], references: [id])
-  user           User?    @relation(fields: [userId], references: [id])
-  order          Order?   @relation(fields: [orderId], references: [id])
+model Event {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  location    String
+  imageUrl    String?
+  startsAt    DateTime
+  createdAt   DateTime @default(now())
+  creatorId   Int
+  creator     User     @relation(fields: [creatorId], references: [id])
 }
 
 model Order {
@@ -153,11 +95,11 @@ model Order {
   total                   Float
   status                  OrderStatus        @default(CONFIRMED)
   createdAt               DateTime           @default(now())
-  user                    User?              @relation(fields: [userId], references: [id])
+  couponRedemptions       CouponRedemption[]
   coupon                  Coupon?            @relation(fields: [couponId], references: [id])
   discount                Discount?          @relation(fields: [discountId], references: [id])
+  user                    User?              @relation(fields: [userId], references: [id])
   items                   OrderItem[]
-  couponRedemptions       CouponRedemption[]
 }
 
 model OrderItem {
@@ -173,4 +115,75 @@ model OrderItem {
   total          Float
   order          Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product        Product @relation(fields: [productId], references: [id])
+}
+
+model Product {
+  id          Int               @id @default(autoincrement())
+  storeId     Int
+  name        String
+  category    String
+  price       Float
+  stock       Int               @default(0)
+  imageUrl    String?
+  description String?
+  active      Boolean           @default(true)
+  createdAt   DateTime          @default(now())
+  discounts   DiscountProduct[]
+  orderItems  OrderItem[]
+  store       Store             @relation(fields: [storeId], references: [id])
+}
+
+model Store {
+  id          Int        @id @default(autoincrement())
+  ownerId     Int?
+  name        String
+  category    String
+  description String?
+  logoUrl     String?
+  website     String?
+  active      Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  coupons     Coupon[]
+  discounts   Discount[]
+  products    Product[]
+  owner       User?      @relation(fields: [ownerId], references: [id])
+}
+
+model User {
+  id                Int                @id @default(autoincrement())
+  name              String
+  email             String             @unique
+  password          String
+  role              UserRole           @default(COMPRADOR)
+  createdAt         DateTime           @default(now())
+  couponRedemptions CouponRedemption[]
+  events            Event[]
+  orders            Order[]
+  stores            Store[]
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+enum PromotionStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  EXPIRED
+  REJECTED
+}
+
+enum PromotionType {
+  PERCENTAGE
+  FIXED_AMOUNT
+  TWO_FOR_ONE
+}
+
+enum UserRole {
+  COMPRADOR
+  VENDEDOR
+  ADMIN
 }
