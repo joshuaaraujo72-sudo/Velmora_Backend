@@ -1,15 +1,176 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  COMPRADOR
+  VENDEDOR
+  ADMIN
+}
+
+enum PromotionType {
+  PERCENTAGE
+  FIXED_AMOUNT
+  TWO_FOR_ONE
+}
+
+enum PromotionStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  EXPIRED
+  REJECTED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+model User {
+  id                Int                @id @default(autoincrement())
+  name              String
+  email             String             @unique
+  password          String
+  role              UserRole           @default(COMPRADOR)
+  createdAt         DateTime           @default(now())
+  stores            Store[]
+  orders            Order[]
+  couponRedemptions CouponRedemption[]
+}
+
+model Store {
+  id          Int        @id @default(autoincrement())
+  ownerId     Int?
+  name        String
+  category    String
+  description String?
+  logoUrl     String?
+  website     String?
+  active      Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  owner       User?      @relation(fields: [ownerId], references: [id])
+  products    Product[]
+  discounts   Discount[]
+  coupons     Coupon[]
+}
+
+model Product {
+  id          Int               @id @default(autoincrement())
+  storeId     Int
+  name        String
+  category    String
+  price       Float
+  stock       Int               @default(0)
+  imageUrl    String?
+  description String?
+  active      Boolean           @default(true)
+  createdAt   DateTime          @default(now())
+  store       Store             @relation(fields: [storeId], references: [id])
+  discounts   DiscountProduct[]
+  orderItems  OrderItem[]
+}
+
+model Discount {
+  id                Int               @id @default(autoincrement())
+  storeId           Int
+  title             String
+  description       String?
+  type              PromotionType
+  value             Float             @default(0)
+  category          String?
+  startsAt          DateTime          @default(now())
+  endsAt            DateTime?
+  status            PromotionStatus   @default(ACTIVE)
+  minPurchaseAmount Float             @default(0)
+  maxUses           Int?
+  usedCount         Int               @default(0)
+  stackable         Boolean           @default(false)
+  createdAt         DateTime          @default(now())
+  store             Store             @relation(fields: [storeId], references: [id])
+  products          DiscountProduct[]
+  orders            Order[]
+}
+
+model DiscountProduct {
+  discountId Int
+  productId  Int
+  discount   Discount @relation(fields: [discountId], references: [id], onDelete: Cascade)
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@id([discountId, productId])
+}
+
+model Coupon {
+  id                Int                @id @default(autoincrement())
+  storeId           Int?
+  code              String             @unique
+  description       String?
+  type              PromotionType
+  value             Float              @default(0)
+  category          String?
+  startsAt          DateTime           @default(now())
+  endsAt            DateTime?
+  status            PromotionStatus    @default(ACTIVE)
+  minPurchaseAmount Float              @default(0)
+  maxUses           Int?
+  usedCount         Int                @default(0)
+  perUserLimit      Int?
+  stackable         Boolean            @default(false)
+  createdAt         DateTime           @default(now())
+  store             Store?             @relation(fields: [storeId], references: [id])
+  orders            Order[]
+  redemptions       CouponRedemption[]
+}
+
+model CouponRedemption {
+  id             Int      @id @default(autoincrement())
+  couponId       Int
+  userId         Int?
+  orderId        Int?
+  discountAmount Float
+  usedAt         DateTime @default(now())
+  coupon         Coupon   @relation(fields: [couponId], references: [id])
+  user           User?    @relation(fields: [userId], references: [id])
+  order          Order?   @relation(fields: [orderId], references: [id])
+}
+
+model Order {
+  id                      Int                @id @default(autoincrement())
+  userId                  Int?
+  couponId                Int?
+  discountId              Int?
+  subtotal                Float
+  automaticDiscountAmount Float              @default(0)
+  couponDiscountAmount    Float              @default(0)
+  discountAmount          Float              @default(0)
+  total                   Float
+  status                  OrderStatus        @default(CONFIRMED)
+  createdAt               DateTime           @default(now())
+  user                    User?              @relation(fields: [userId], references: [id])
+  coupon                  Coupon?            @relation(fields: [couponId], references: [id])
+  discount                Discount?          @relation(fields: [discountId], references: [id])
+  items                   OrderItem[]
+  couponRedemptions       CouponRedemption[]
+}
+
+model OrderItem {
+  id             Int     @id @default(autoincrement())
+  orderId        Int
+  productId      Int
+  storeId        Int
+  productName    String
+  unitPrice      Float
+  quantity       Int
+  subtotal       Float
+  discountAmount Float   @default(0)
+  total          Float
+  order          Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product        Product @relation(fields: [productId], references: [id])
 }

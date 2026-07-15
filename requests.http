@@ -1,0 +1,120 @@
+### Verificar servidor
+GET http://localhost:3000/
+
+### Crear tienda
+POST http://localhost:3000/stores
+Content-Type: application/json
+
+{
+  "name": "Avanto",
+  "category": "Moda elegante",
+  "description": "Prendas sofisticadas para ocasiones especiales."
+}
+
+### Listar tiendas
+GET http://localhost:3000/stores
+
+### Crear producto
+POST http://localhost:3000/products
+Content-Type: application/json
+
+{
+  "storeId": 1,
+  "name": "Chaleco de lino",
+  "category": "Moda elegante",
+  "price": 149.90,
+  "stock": 18,
+  "description": "Chaleco ligero para combinar con pantalones de vestir."
+}
+
+### Listar productos
+GET http://localhost:3000/products
+
+### Crear descuento automatico
+POST http://localhost:3000/discounts
+Content-Type: application/json
+
+{
+  "storeId": 1,
+  "title": "30% OFF Avanto",
+  "description": "Descuento automatico para prendas elegantes.",
+  "type": "PERCENTAGE",
+  "value": 30,
+  "category": "Moda elegante",
+  "startsAt": "2026-01-01T00:00:00.000Z",
+  "endsAt": "2026-12-31T23:59:59.000Z",
+  "minPurchaseAmount": 0,
+  "stackable": false
+}
+
+### Listar descuentos activos
+GET http://localhost:3000/discounts
+
+### Filtrar descuentos por categoria
+GET http://localhost:3000/discounts?category=Moda%20elegante
+
+### Crear cupon
+POST http://localhost:3000/coupons
+Content-Type: application/json
+
+{
+  "code": "VELMORA50",
+  "description": "50% de descuento en tiendas seleccionadas.",
+  "type": "PERCENTAGE",
+  "value": 50,
+  "storeId": 1,
+  "startsAt": "2026-01-01T00:00:00.000Z",
+  "endsAt": "2026-12-31T23:59:59.000Z",
+  "minPurchaseAmount": 0,
+  "maxUses": 100,
+  "perUserLimit": 1,
+  "stackable": false
+}
+
+### Listar cupones activos
+GET http://localhost:3000/coupons
+
+### Validar cupon
+POST http://localhost:3000/coupons/validate
+Content-Type: application/json
+
+{
+  "code": "VELMORA50",
+  "userId": 1,
+  "items": [
+    {
+      "productId": 1,
+      "quantity": 1
+    }
+  ]
+}
+
+### Calcular checkout con descuento automatico y cupon
+POST http://localhost:3000/checkout/summary
+Content-Type: application/json
+
+{
+  "couponCode": "VELMORA50",
+  "userId": 1,
+  "items": [
+    {
+      "productId": 1,
+      "quantity": 1
+    }
+  ]
+}
+
+### Registrar pedido
+POST http://localhost:3000/orders
+Content-Type: application/json
+
+{
+  "couponCode": "VELMORA50",
+  "userId": 1,
+  "items": [
+    {
+      "productId": 1,
+      "quantity": 1
+    }
+  ]
+}
