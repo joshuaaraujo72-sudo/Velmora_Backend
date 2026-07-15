@@ -39,7 +39,7 @@ export async function createEvent(data) {
     const title = cleanText(data.title || data.titulo);
     const description = cleanText(data.description || data.descripcion);
     const startsAt = new Date(data.startsAt || data.fechaInicio);
-    const endsAt = new Date(data.endsAt || data.fechaFin);
+    const endsAt = new Date(data.endsAt || data.fechaFin || data.startsAt || data.fechaInicio);
 
     if (!title || !description || Number.isNaN(startsAt.getTime()) || Number.isNaN(endsAt.getTime())) {
         throw httpError(400, "Titulo, descripcion y fechas validas son obligatorias");
@@ -56,6 +56,16 @@ export async function createEvent(data) {
             endsAt,
             isFeatured: Boolean(data.isFeatured)
         }
+    });
+
+    return eventResponse(event);
+}
+
+export async function deleteEventById(id) {
+    await getEventById(id);
+
+    const event = await prisma.event.delete({
+        where: { id }
     });
 
     return eventResponse(event);

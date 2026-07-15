@@ -11,6 +11,7 @@ import orderRoutes from "./routes/orderRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import sellerRoutes from "./routes/sellerRoutes.js";
 import storeRoutes from "./routes/storeRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 
 loadEnv();
 
@@ -62,6 +63,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/seller", sellerRoutes);
 app.use("/api/stores", storeRoutes);
+app.use("/api/users", userRoutes);
 
 app.use((req, res) => {
     res.status(404).json({

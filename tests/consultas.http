@@ -1,0 +1,46 @@
+@baseUrl = http://localhost:3000
+@token = PEGAR_TOKEN_AQUI
+@eventId = PEGAR_EVENT_ID_AQUI
+
+### Estado del backend
+GET {{baseUrl}}/
+
+### Health check
+GET {{baseUrl}}/health
+
+### Crear usuario desde ruta de usuarios
+POST {{baseUrl}}/api/users
+Content-Type: application/json
+
+{
+  "name": "Joshua",
+  "email": "joshua@gmail.com",
+  "password": "123456",
+  "role": "SELLER"
+}
+
+### Listar usuarios publicos
+GET {{baseUrl}}/api/users
+Authorization: Bearer {{token}}
+
+### Crear evento
+POST {{baseUrl}}/api/events
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Lanzamiento Verano",
+  "description": "Coleccion 2026",
+  "type": "EVENTO",
+  "storeName": "Velmora",
+  "imageUrl": "https://images.unsplash.com/photo-1523381210434-271e8be1f52",
+  "startsAt": "2026-07-30T18:00:00.000Z",
+  "endsAt": "2026-07-30T21:00:00.000Z"
+}
+
+### Obtener eventos
+GET {{baseUrl}}/api/events
+
+### Eliminar evento
+DELETE {{baseUrl}}/api/events/{{eventId}}
+Authorization: Bearer {{token}}
