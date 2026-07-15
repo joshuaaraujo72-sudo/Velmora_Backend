@@ -1,0 +1,27 @@
+POST http://localhost:3000/events
+Content-Type: application/json
+
+{
+    "title": "Lanzamiento Verano",
+    "description": "Colección 2026",
+    "location": "Lima",
+    "imageUrl": "https://images.unsplash.com/photo-1523381210434-271e8be1f52",
+    "startsAt": "2026-07-30T18:00:00.000Z",
+    "creatorId": 1
+}
+
+### Crear usuario
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "name": "Joshua",
+    "email": "joshua@gmail.com",
+    "password": "123456",
+    "role": "VENDEDOR"
+}
+### Obtener eventos
+GET http://localhost:3000/events
+
+### Eliminar evento
+DELETE http://localhost:3000/events/3

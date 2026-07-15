@@ -1,23 +1,25 @@
 import express from "express";
 import cors from "cors";
-import { PrismaClient } from "@prisma/client";
+import userRoutes from "./routes/userRoutes.js";
 import eventRoutes from "./routes/eventRoutes.js";
 
-app.use("/events", eventRoutes);
 const app = express();
-const prisma = new PrismaClient();
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 const PORT = process.env.PORT || 3000;
 
+app.use("/users", userRoutes);
+app.use("/events", eventRoutes);
+
 app.get("/", (req, res) => {
     res.json({
-        message: "Velmora Backend funcionando"
+        message: "Backend Velmora funcionando"
     });
 });
 
 app.listen(PORT, () => {
-    console.log(`Servidor iniciado en http://localhost:${PORT}`);
+    console.log(`Servidor ejecutándose en http://localhost:${PORT}`);
 });
