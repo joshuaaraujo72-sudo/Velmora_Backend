@@ -1,8 +1,18 @@
 import {
     deleteProduct,
     getProductById,
+    listProducts,
     updateProduct
 } from "../services/productService.js";
+
+export async function index(req, res, next) {
+    try {
+        const products = await listProducts(req.query);
+        res.status(200).json({ products });
+    } catch (error) {
+        next(error);
+    }
+}
 
 export async function show(req, res, next) {
     try {

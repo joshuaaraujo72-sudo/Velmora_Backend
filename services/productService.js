@@ -66,6 +66,36 @@ async function findProductForOwner(productId, ownerId) {
     return product;
 }
 
+export async function listProducts({ category, search } = {}) {
+    const products = await prisma.product.findMany({
+        where: {
+            isActive: true,
+            ...(category && category !== "Todas" ? { category } : {}),
+            ...(search
+                ? {
+                    OR: [
+                        { name: { contains: search, mode: "insensitive" } },
+                        { description: { contains: search, mode: "insensitive" } },
+                        { category: { contains: search, mode: "insensitive" } }
+                    ]
+                }
+                : {})
+        },
+        orderBy: { createdAt: "desc" },
+        include: {
+            store: {
+                select: {
+                    id: true,
+                    name: true,
+                    logoUrl: true
+                }
+            }
+        }
+    });
+
+    return products.map(productResponse);
+}
+
 export async function getProductById(productId) {
     const product = await prisma.product.findFirst({
         where: {

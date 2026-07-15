@@ -1,11 +1,10 @@
 import { Router } from "express";
-import { index, show, store } from "../controllers/eventController.js";
+import { index, store } from "../controllers/discountController.js";
 import { requireAuth, requireSeller } from "../middleware/authMiddleware.js";
 
 const router = Router();
 
 router.get("/", index);
-router.get("/:id", show);
 router.post("/", requireAuth, requireSeller, store);
 
 export default router;

@@ -3,6 +3,8 @@ import cors from "cors";
 import { loadEnv } from "./config/env.js";
 import { prisma } from "./services/prisma.js";
 import authRoutes from "./routes/authRoutes.js";
+import discountRoutes from "./routes/discountRoutes.js";
+import eventRoutes from "./routes/eventRoutes.js";
 import homeRoutes from "./routes/homeRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
@@ -24,7 +26,7 @@ app.use(cors({
     origin: process.env.NODE_ENV === "production" ? allowedOrigins : true,
     credentials: true
 }));
-app.use(express.json());
+app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
@@ -51,6 +53,8 @@ app.get("/health", async (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/discounts", discountRoutes);
+app.use("/api/events", eventRoutes);
 app.use("/api/home", homeRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/products", productRoutes);
