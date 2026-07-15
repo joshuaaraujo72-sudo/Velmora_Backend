@@ -3,6 +3,7 @@ import cors from "cors";
 import { loadEnv } from "./config/env.js";
 import { prisma } from "./services/prisma.js";
 import authRoutes from "./routes/authRoutes.js";
+import cartRoutes from "./routes/cartRoutes.js";
 import discountRoutes from "./routes/discountRoutes.js";
 import eventRoutes from "./routes/eventRoutes.js";
 import homeRoutes from "./routes/homeRoutes.js";
@@ -53,6 +54,7 @@ app.get("/health", async (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/cart", cartRoutes);
 app.use("/api/discounts", discountRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/home", homeRoutes);

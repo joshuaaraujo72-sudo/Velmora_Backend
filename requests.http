@@ -84,6 +84,9 @@ Authorization: Bearer {{token}}
 ### Productos de una tienda
 GET {{baseUrl}}/api/stores/{{storeId}}/products
 
+### Productos generales
+GET {{baseUrl}}/api/products
+
 ### Editar producto
 PUT {{baseUrl}}/api/products/{{productId}}
 Content-Type: application/json
@@ -100,6 +103,37 @@ Content-Type: application/json
 
 {
   "type": "CATALOG_CLICK"
+}
+
+### Calcular resumen de checkout del carrito
+POST {{baseUrl}}/api/cart/checkout/summary
+Content-Type: application/json
+
+{
+  "items": [
+    {
+      "productId": "{{productId}}",
+      "quantity": 1,
+      "selectedSize": "M",
+      "selectedColor": "Negro"
+    }
+  ]
+}
+
+### Registrar pedido desde carrito
+POST {{baseUrl}}/api/cart/orders
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "items": [
+    {
+      "productId": "{{productId}}",
+      "quantity": 1,
+      "selectedSize": "M",
+      "selectedColor": "Negro"
+    }
+  ]
 }
 
 ### Crear orden de compra
@@ -128,3 +162,24 @@ Authorization: Bearer {{token}}
 
 ### Datos dinamicos para landing
 GET {{baseUrl}}/api/home
+
+### Listar eventos
+GET {{baseUrl}}/api/events
+
+### Crear evento
+POST {{baseUrl}}/api/events
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Velmora Fashion Night",
+  "description": "Evento de moda para tiendas registradas.",
+  "startsAt": "2026-07-20",
+  "endsAt": "2026-07-21",
+  "imageUrl": "https://example.com/evento.png",
+  "type": "EVENTO",
+  "storeName": "Velmora Studio"
+}
+
+### Listar descuentos
+GET {{baseUrl}}/api/discounts
